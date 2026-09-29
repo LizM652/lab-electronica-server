@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const app = express();
 
-// 1. Configurar Middleware de CORS para permitir peticiones desde Vercel
+// 1. Configurar Middleware de CORS
 app.use(cors({
   origin: '*', // Permite solicitudes desde cualquier origen (Vercel, Localhost, etc.)
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -26,8 +26,9 @@ app.get('/', (req, res) => {
   res.send('API del Inventario TESJo corriendo correctamente en Render');
 });
 
-// 4. Tus Rutas de la API (Asegúrate de importar y usar tus rutas aquí)
-// Ej: app.use('/api/inventario', require('./routes/inventarioRoutes'));
+// 4. Montar las rutas de componentes bajo la ruta /api/components
+const componentesRoutes = require('./routes/componentesroutes.js');
+app.use('/api/components', componentesRoutes.default || componentesRoutes);
 
 // 5. Puerto dinámico para Render
 const PORT = process.env.PORT || 5000;
