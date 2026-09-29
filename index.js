@@ -1,30 +1,36 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import { connectDB } from './config/db.js';
-import componentRoutes from './routes/componentRoutes.js';
-
-dotenv.config();
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 
-// Middlewares
-app.use(cors());
+// 1. Configurar Middleware de CORS para permitir peticiones desde Vercel
+app.use(cors({
+  origin: '*', // Permite solicitudes desde cualquier origen (Vercel, Localhost, etc.)
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 
-// Conexión a MongoDB
-connectDB();
+// 2. Conexión a MongoDB Atlas
+const MONGO_URI = process.env.MONGO_URI;
 
-// Rutas de la API
-app.use('/api/components', componentRoutes);
+mongoose.connect(MONGO_URI)
+  .then(() => console.log('MongoDB Conectado Exitosamente'))
+  .catch((err) => console.error('Error de conexión a MongoDB:', err));
 
-// Ruta de prueba inicial
+// 3. Ruta de prueba principal
 app.get('/', (req, res) => {
-  res.send('API del Laboratorio de Electrónica Funcionando Correctamente');
+  res.send('API del Inventario TESJo corriendo correctamente en Render');
 });
 
-const PORT = process.env.PORT || 5000;
+// 4. Tus Rutas de la API (Asegúrate de importar y usar tus rutas aquí)
+// Ej: app.use('/api/inventario', require('./routes/inventarioRoutes'));
 
+// 5. Puerto dinámico para Render
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
